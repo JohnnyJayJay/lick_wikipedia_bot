@@ -1,20 +1,20 @@
-## TMNT Wikipedia Bot
+## The Lick Wikipedia Bot
 
-Every 60 minutes this Python script posts to https://twitter.com/wiki_tmnt and https://botsin.space/@tmnt
+Every 60 minutes this Python script posts to *TODO*
+The majority of the original functionality implemented by @catleball for TMNT Wikipedia bot @wiki_tmnt - I've just changed the meter searching and the image macroing.
 
 ### Why
 
-For fun! Inspired by https://xkcd.com/1412/
+For fun! Inspired by https://twitter.com/insanerainmusic/status/1186288069986734080, and original setup (TMNT Wikipedia bot) inspired by https://xkcd.com/1412/
 
 ### How
 
 When it runs, it:
 - Pulls 10 random Wikipedia article titles
-- Checks if they are in trochaic tetrameter
+- Checks if they are in a suitable prosody/meter to match The Lick (or a variant of it)
   - If not, pull 10 more articles ad infinitum until a match is found
-- Create a faux-TMNT logo containing the wiki title
-  - I'm using the logic at http://glench.com/tmnt to do this
-- Post the title and generated logo to @wiki_tmnt on Twitter
+- Create an image containing The Lick phrase and the found lyrics underneath
+- Post the title and generated logo to *TODO*
 
 ### Environment
 
@@ -28,7 +28,7 @@ This script requires the following:
   - num2words
   - PIL
 
-For @wiki_tmnt it runs on a cron job on my local machine.
+For *TODO* it runs on a cron job on my local machine.
 
 ### Configuration
 
@@ -43,19 +43,5 @@ Given this runs once per hour, I'm not very concerned about performance. I often
 ### TODO
 
 TODO:
-  - More docstrings
-  - README
-  - CLI arguments
-  - use real file format for keys
-  - refactor key fetching to be done once
-  - Integration tests
-  - more unit tests
-  - actually enable option to run doctests
-  - Run glench.com/tmnt locally
-
-Super bonus points:
-  - CI
-  - Mastodon
-  - zipapp release
-  - archive posts locally
-  - cache of titles : stresses
+  - Implement for The Lick
+  - Setup a Twitter bot for this
