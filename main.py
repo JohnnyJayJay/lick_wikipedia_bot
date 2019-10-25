@@ -11,8 +11,8 @@ from lib import words
 
 
 def main():
-    title = searchForTMNT(MAX_ATTEMPTS, BACKOFF)
-    logo = images.getLogo(words.addPadding(title))
+    title = searchForLick(MAX_ATTEMPTS, BACKOFF)
+    #logo = images.getLogo(title)
     status_text = "\n".join((title, words.getWikiUrl(title)))
 
     if len(status_text) > MAX_STATUS_LEN:
@@ -21,20 +21,20 @@ def main():
     #_ = twitter.sendTweet(status_text, logo)
 
 
-def searchForTMNT(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
-    """Loop MAX_ATTEMPT times, searching for a TMNT meter wikipedia title.
+def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
+    """Loop MAX_ATTEMPT times, searching for a Lick meter wikipedia title.
 
     Args:
         Integer: attempts, retries remaining.
         Integer: backoff, seconds to wait between each loop.
     Returns:
-        String or False: String of wikipedia title in TMNT meter, or False if
+        String or False: String of wikipedia title in Lick meter, or False if
                          none found.
     """
     for attempt in range(attempts):
         print(f"\r{str(attempt * 10)} articles fetched...", end="")
         sys.stdout.flush()
-        title = checkTenPagesForTMNT()
+        title = checkTenPagesForLick()
 
         if type(title) == str and len(title) > 1:
             print(f"\nMatched: {title}")
@@ -46,16 +46,16 @@ def searchForTMNT(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
     sys.exit(1)
 
 
-def checkTenPagesForTMNT():
-    """Get 10 random wiki titles, check if any of them isTMNT().
+def checkTenPagesForLick():
+    """Get 10 random wiki titles, check if any of them isLick().
 
     We grab the max allowed Wikipedia page titles (10) using wikipedia.random().
-    If any title is in TMNT meter, return the title. Otherwise, return False.
+    If any title is in Lick meter, return the title. Otherwise, return False.
 
     Args:
         None
     Returns:
-        String or False: The TMNT compliant title, or False if none found.
+        String or False: The Lick compliant title, or False if none found.
     """
     wikipedia.set_rate_limiting(True)
     try:
@@ -72,7 +72,7 @@ def checkTenPagesForTMNT():
         sys.exit(1)
 
     for title in titles:
-        if words.isTMNT(title):
+        if words.isLick(title):
             return title
     return False
 

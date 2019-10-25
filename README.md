@@ -1,6 +1,6 @@
 ## The Lick Wikipedia Bot
 
-Every 60 minutes this Python script posts to *TODO*
+Every 60 minutes this Python script posts to @thelickbot
 The majority of the original functionality implemented by @catleball for TMNT Wikipedia bot @wiki_tmnt - I've just changed the meter searching and the image macroing.
 
 ### Why
@@ -14,7 +14,7 @@ When it runs, it:
 - Checks if they are in a suitable prosody/meter to match The Lick (or a variant of it)
   - If not, pull 10 more articles ad infinitum until a match is found
 - Create an image containing The Lick phrase and the found lyrics underneath
-- Post the title and generated logo to *TODO*
+- Post the title and generated music to @thelickbot
 
 ### Environment
 
@@ -30,7 +30,7 @@ This script requires the following:
   - tweepy
   - wikipedia
 
-For *TODO* it runs on a cron job on my local machine.
+For @thelickbot it runs on a cron job on my local machine.
 
 ### Configuration
 

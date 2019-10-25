@@ -17,5 +17,5 @@ KEY_PATH = r'C:/Users/cathe/.tmnt.keys'
 BANNED_WORDS = ("rape", "nazi", "victim")
 BANNED_PHRASES = ("rugby union", "historic district", "murder of")
 PRONUNCIATION_OVERRIDES = (("HD", "10"), ("U.S.", "10"), ("Laos", "1"))
-TMNT_STRESSES = re.compile(r"1[02]1[02]1[02]1[02]")
+LICK_STRESSES = re.compile(r"^1[012]1[012]1[012][012]$")
 CHARS_ONLY = re.compile("[^a-zA-Z]")
