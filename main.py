@@ -6,7 +6,6 @@ import wikipedia
 
 from lib.constants import BACKOFF, MAX_ATTEMPTS, MAX_STATUS_LEN, TIMEOUT_BACKOFF
 from lib import images
-from lib import mastodon
 from lib import twitter
 from lib import words
 
@@ -19,8 +18,7 @@ def main():
     if len(status_text) > MAX_STATUS_LEN:
         status_text = title
 
-    _ = twitter.sendTweet(status_text, logo)
-    _ = mastodon.sendToot(status_text, logo)
+    #_ = twitter.sendTweet(status_text, logo)
 
 
 def searchForTMNT(attempts=MAX_ATTEMPTS, backoff=BACKOFF):

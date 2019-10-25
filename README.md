@@ -26,7 +26,9 @@ This script requires the following:
 - Via PyPi:
   - pronouncing
   - num2words
-  - PIL
+  - PIL (pillow)
+  - tweepy
+  - wikipedia
 
 For *TODO* it runs on a cron job on my local machine.
 
