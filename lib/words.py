@@ -83,9 +83,9 @@ def getTitleStresses(title: str):
         elif isinstance(word_stresses, tuple):
             title_stresses += word_stresses[0]
             title_split.append(word_stresses[1])
-
-    print((title, title_stresses, " ".join(title_split)))
-    return (title_stresses, " ".join(title_split))
+    print(title_split)
+    #print((title, title_stresses, " ".join(title_split)))
+    return (title_stresses, title_split)
 
 
 def getWordStresses(word: str):
@@ -102,12 +102,11 @@ def getWordStresses(word: str):
         stresses = pronouncing.stresses(phones[0])
         syllable_count = pronouncing.syllable_count(phones[0])
         chunks, chunk_size = len(word), int(math.ceil(len(word)/syllable_count))
-        syllables = [ word[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
-        syllables_hyphenated = "".join(intersperse(syllables, "-"))
+        syllables = [word[i:i+chunk_size] for i in range(0, chunks, chunk_size)]
     except IndexError:
         # Hacky way of discarding candidate title
         return ("?", "")
-    return (stresses, syllables_hyphenated)
+    return (stresses, syllables)
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
