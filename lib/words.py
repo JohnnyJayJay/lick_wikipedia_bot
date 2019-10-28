@@ -34,7 +34,10 @@ def isLick(title: str):
     if (not title_stresses) or (not title_stresses[0]):
         return False
 
-    return True if LICK_STRESSES.match(title_stresses[0]) else False
+    for stress in title_stresses:
+        if LICK_STRESSES.match(stress):
+            return True
+    return False
 
 
 def containsBanned(title: str):
