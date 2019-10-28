@@ -34,10 +34,7 @@ def isLick(title: str):
     if (not title_stresses) or (not title_stresses[0]):
         return False
 
-    for stress in title_stresses:
-        if LICK_STRESSES.match(stress):
-            return True
-    return False
+    return True if LICK_STRESSES.match(title_stresses[0]) else False
 
 
 def containsBanned(title: str):
@@ -86,7 +83,8 @@ def getTitleStresses(title: str):
         elif isinstance(word_stresses, tuple):
             title_stresses += word_stresses[0]
             title_split.append(word_stresses[1])
-    print(title_split)
+    while '' in title_split:
+        title_split.remove('')
     #print((title, title_stresses, " ".join(title_split)))
     return (title_stresses, title_split)
 
