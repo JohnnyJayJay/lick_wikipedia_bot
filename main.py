@@ -12,6 +12,7 @@ from lib import words
 
 def main():
     title = searchForLick(MAX_ATTEMPTS, BACKOFF)
+    print(f"\nMatched: {title}")
     #logo = images.getLogo(title)
     status_text = "\n".join((title, words.getWikiUrl(title)))
 
@@ -37,7 +38,6 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
         title = checkTenPagesForLick()
 
         if type(title) == str and len(title) > 1:
-            print(f"\nMatched: {title}")
             return title
 
         time.sleep(backoff)
