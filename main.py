@@ -11,13 +11,15 @@ from lib import words
 
 
 def main():
-    title = searchForLick(MAX_ATTEMPTS, BACKOFF)
-    print(f"\nMatched: {title}")
+    #title = searchForLick(MAX_ATTEMPTS, BACKOFF)
+    #print(f"\nMatched: {title}")
     #logo = images.getLogo(title)
-    status_text = "\n".join((title, words.getWikiUrl(title)))
+    #status_text = "\n".join((title, words.getWikiUrl(title)))
 
-    if len(status_text) > MAX_STATUS_LEN:
-        status_text = title
+    #if len(status_text) > MAX_STATUS_LEN:
+    #    status_text = title
+
+    images.getLiccScore([]).show()
 
     #_ = twitter.sendTweet(status_text, logo)
 

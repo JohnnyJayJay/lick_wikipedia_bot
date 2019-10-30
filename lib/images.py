@@ -2,7 +2,15 @@ import subprocess
 import sys
 
 from lib.constants import LOGO_PATH, CHROME_PATH, SCREENSHOT_PATH
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageDraw, ImageFont
+
+def getLiccScore(syllables):
+    score = Image.open("./resources/thelicc.png")
+    draw = ImageDraw.Draw(score)
+    font = ImageFont.truetype("./resources/arial.ttf", 32)
+    draw.text(xy=(50, 50), text="Hello?", fill="black", font=font)
+    score.save("whatever.png")
+    return score
 
 
 def getLogo(title: str, chrome=CHROME_PATH):
