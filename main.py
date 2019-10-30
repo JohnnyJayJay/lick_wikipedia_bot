@@ -19,7 +19,7 @@ def main():
     #if len(status_text) > MAX_STATUS_LEN:
     #    status_text = title
 
-    images.getLiccScore([]).show()
+    images.getLiccScore([["Jo", "seph"], ["Ri", "der"], ["Far", "ring", "ton"]]).show()
 
     #_ = twitter.sendTweet(status_text, logo)
 
