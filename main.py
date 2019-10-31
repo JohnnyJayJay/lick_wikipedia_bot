@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
-import os
 import sys
 import time
 
-import pyphen
 import wikipedia
 
-from lib.constants import BACKOFF, MAX_ATTEMPTS, MAX_STATUS_LEN, TIMEOUT_BACKOFF, LICK_STRESSES
 from lib import images
 from lib import twitter
 from lib import words
-import syllables
+from lib.constants import BACKOFF, MAX_ATTEMPTS, TIMEOUT_BACKOFF
+
+
+def test():
+    syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
+    images.getLiccScore(syllables).show()
 
 
 def main():
     syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
-    images.getLiccScore(syllables).show()
-
-    # _ = twitter.sendTweet(status_text, logo)
+    score = images.getLiccScore(syllables)
+    path = f"./temp/licc-{int(time.time())}.png"
+    score.save(path)
+    _ = twitter.sendTweet(path)
 
 
 def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
