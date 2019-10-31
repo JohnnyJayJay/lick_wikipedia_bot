@@ -28,6 +28,7 @@ This script requires the following:
   - num2words
   - PIL (pillow)
   - pyphen
+  - syllables
   - tweepy
   - wikipedia
 
