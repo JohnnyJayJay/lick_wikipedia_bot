@@ -27,8 +27,7 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
         Integer: attempts, retries remaining.
         Integer: backoff, seconds to wait between each loop.
     Returns:
-        String or False: String of wikipedia title in Lick meter, or False if
-                         none found.
+        The syllables of a matching wikipedia title
     """
     for attempt in range(attempts):
         print(f"\r{str(attempt * 10)} articles fetched...", end="")
@@ -36,7 +35,7 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
         title = getRandomLickTitle()
         if title is not None:
             print(f"\nFound match: {title}")
-            syllables = words.getSyllables(title)
+            syllables = words.adjustHyphenation(words.getHyphenation(title))
             if syllables is not None:
                 return syllables
 
@@ -50,12 +49,12 @@ def getRandomLickTitle():
     """Get 10 random wiki titles, check if any of them isLick().
 
     We grab the max allowed Wikipedia page titles (10) using wikipedia.random().
-    If any title is in Lick meter, return the title. Otherwise, return False.
+    If any title is in Lick meter, return the title. Otherwise, return None.
 
     Args:
         None
     Returns:
-        String or False: The Lick compliant title, or False if none found.
+        String or None: The Lick compliant title, or None if none found.
     """
     wikipedia.set_rate_limiting(True)
     try:

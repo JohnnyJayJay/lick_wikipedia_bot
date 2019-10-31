@@ -10,11 +10,18 @@ from lib.constants import (
     CHARS_ONLY,
     PRONUNCIATION_OVERRIDES,
     LICK_STRESSES,
+    LICK_NOTES
 )
 
 dic = pyphen.Pyphen(lang="en_UK")
 
 def isLick(title: str):
+    """
+    Returns whether or not the argument is pronounced in a way that matches THE LICC.
+
+    :param title: the string to be tested
+    :return: True, if it matches, False if not.
+    """
     if containsBanned(title):
         return False
 
@@ -23,13 +30,27 @@ def isLick(title: str):
     return LICK_STRESSES.match(stresses) is not None
 
 
-def getSyllables(title: str):
-    return adjust([dic.inserted(word).split("-") for word in title.split()])
+def getHyphenation(title: str):
+    """Splits the title into words and its words into possible hyphenations.
+
+    :param title: The string to split and hyphenate
+    :return: A list (representing the whole title) containing lists (representing words)
+            containing strings (representing hyphenated parts of the word)
+    """
+    return [dic.inserted(word).split("-") for word in title.split()]
 
 
-def adjust(syllables: list):
-    for wordIndex in range(len(syllables)):
-        word = syllables[wordIndex]
+def adjustHyphenation(hyphenation: list):
+    """
+    Adjusts a list of possible hyphenations in the format of getHyphenation(str),
+    so that the amount of (deep) elements is equal to the amount of notes used by THE LICC.
+    Note that this modifies the argument list.
+
+    :param hyphenation: A list in the format of what getHyphenation(str) returns
+    :return: the argument or None if it couldn't be adjusted.
+    """
+    for wordIndex in range(len(hyphenation)):
+        word = hyphenation[wordIndex]
         for syllableIndex in range(len(word)):
             syllable = word[syllableIndex]
             if estimate(syllable) > 1:
@@ -37,12 +58,13 @@ def adjust(syllables: list):
                 word.insert(syllableIndex, syllable[:half])
                 word.insert(syllableIndex + 1, syllable[half:])
                 word.remove(syllable)
-            if sum(map(lambda l: len(l), syllables)) == 7:
-                return syllables
+            if sum(map(lambda l: len(l), hyphenation)) == LICK_NOTES:
+                return hyphenation
 
 
 def containsBanned(title: str):
-    """Return True if banned words or phrases in string.
+    """
+    Return True if banned words or phrases in string.
 
     This implementation is slow, but is was fast to write and I don't care about
     speed for this script.

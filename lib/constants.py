@@ -7,9 +7,10 @@ MAX_STATUS_LEN = 280
 BACKOFF = 0.5
 TIMEOUT_BACKOFF = 240
 KEY_PATH = ""
-# Licc image information
+# Licc information
 Y_POSITION = 220
 X_POSITIONS = [172, 267, 362, 457, 552, 697, 792]
+LICK_NOTES = 7
 # Article titles the contain strings in BANNED_WORDS are skipped.
 # Banned words are things that are very inappropriate, or things
 # that are oversaturating the timeline, i.e. historic districts
