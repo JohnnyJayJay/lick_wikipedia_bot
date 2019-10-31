@@ -10,6 +10,7 @@ from lib.constants import BACKOFF, MAX_ATTEMPTS, MAX_STATUS_LEN, TIMEOUT_BACKOFF
 from lib import images
 from lib import twitter
 from lib import words
+import syllables
 
 
 def main():
@@ -34,8 +35,10 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
         sys.stdout.flush()
         title = getRandomLickTitle()
         if title is not None:
-            print(f"Found match: {title}")
-            return words.getSyllables(title)
+            print(f"\nFound match: {title}")
+            syllables = words.getSyllables(title)
+            if syllables is not None:
+                return syllables
 
         time.sleep(backoff)
 

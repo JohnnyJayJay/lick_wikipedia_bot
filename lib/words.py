@@ -1,6 +1,8 @@
 import pronouncing
 import pyphen
 from num2words import num2words as n2w
+from syllables import estimate
+
 
 from lib.constants import (
     BANNED_WORDS,
@@ -18,11 +20,26 @@ def isLick(title: str):
 
     clean = cleanStr(title)
     stresses = getTitleStresses(clean)
-    return LICK_STRESSES.match(stresses)
+    return LICK_STRESSES.match(stresses) is not None
 
 
 def getSyllables(title: str):
-    return [dic.inserted(word).split("-") for word in title.split()]
+    return adjust([dic.inserted(word).split("-") for word in title.split()])
+
+
+def adjust(syllables: list):
+    for wordIndex in range(len(syllables)):
+        word = syllables[wordIndex]
+        for syllableIndex in range(len(word)):
+            syllable = word[syllableIndex]
+            if estimate(syllable) > 1:
+                half = int(len(syllable) / 2) + 1
+                word.insert(syllableIndex, syllable[:half])
+                word.insert(syllableIndex + 1, syllable[half:])
+                word.remove(syllable)
+            if sum(map(lambda l: len(l), syllables)) == 7:
+                return syllables
+
 
 def containsBanned(title: str):
     """Return True if banned words or phrases in string.
@@ -66,7 +83,7 @@ def getTitleStresses(title: str):
         # If word was a long number, it may have been parsed into several words.
         if isinstance(word_stresses, list):
             title_words = word_stresses + title_words
-        elif isinstance(word_stresses, tuple):
+        elif isinstance(word_stresses, str):
             title_stresses += word_stresses
 
     return title_stresses
@@ -86,7 +103,7 @@ def getWordStresses(word: str):
         stresses = pronouncing.stresses(phones[0])
     except IndexError:
         # Hacky way of discarding candidate title
-        return ("?", "")
+        return "?"
     return stresses
 
 def numbersToWords(word):

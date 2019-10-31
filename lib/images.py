@@ -6,7 +6,7 @@ from lib.constants import Y_POSITION, X_POSITIONS
 def getLiccScore(syllables):
     score = Image.open("./resources/thelicc.png")
     draw = ImageDraw.Draw(score)
-    font = ImageFont.truetype("./resources/arial.ttf", 28)
+    font = ImageFont.truetype("./resources/arial.ttf", 24)
     x_index = 0
     for word in syllables:
         prev_end = 0
