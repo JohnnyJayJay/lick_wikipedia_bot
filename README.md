@@ -27,6 +27,7 @@ This script requires the following:
   - pronouncing
   - num2words
   - PIL (pillow)
+  - pyphen
   - tweepy
   - wikipedia
 
@@ -45,5 +46,4 @@ Given this runs once per hour, I'm not very concerned about performance. I often
 ### TODO
 
 TODO:
-  - Implement for The Lick
   - Setup a Twitter bot for this
