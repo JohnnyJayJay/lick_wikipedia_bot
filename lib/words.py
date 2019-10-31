@@ -1,7 +1,6 @@
 import pronouncing
-import urllib
-import re
-import math
+import pyphen
+from num2words import num2words as n2w
 
 from lib.constants import (
     BANNED_WORDS,
@@ -10,32 +9,20 @@ from lib.constants import (
     PRONUNCIATION_OVERRIDES,
     LICK_STRESSES,
 )
-from num2words import num2words as n2w
 
+dic = pyphen.Pyphen(lang="en_UK")
 
 def isLick(title: str):
-    """Checks if a Wikipedia page title has the same stress pattern as The Lick.
-
-    >>> isLick('Audio induction loop')
-    True
-
-    >>> isTMNT('Peter Alexander Hay')
-    True
-
-    >>> isTMNT('Romeo, Romeo, wherefore art thou, Romeo?')
-    False
-    """
     if containsBanned(title):
         return False
 
-    title = cleanStr(title)
-    title_stresses = getTitleStresses(title)
+    clean = cleanStr(title)
+    stresses = getTitleStresses(clean)
+    return LICK_STRESSES.match(stresses)
 
-    if (not title_stresses) or (not title_stresses[0]):
-        return False
 
-    return True if LICK_STRESSES.match(title_stresses[0]) else False
-
+def getSyllables(title: str):
+    return [dic.inserted(word).split("-") for word in title.split()]
 
 def containsBanned(title: str):
     """Return True if banned words or phrases in string.
@@ -73,7 +60,6 @@ def getTitleStresses(title: str):
     """
     title_words = title.split()
     title_stresses = ""
-    title_split = []
     while title_words:
         word = title_words.pop(0)
         word_stresses = getWordStresses(word)
@@ -81,12 +67,9 @@ def getTitleStresses(title: str):
         if isinstance(word_stresses, list):
             title_words = word_stresses + title_words
         elif isinstance(word_stresses, tuple):
-            title_stresses += word_stresses[0]
-            title_split.append(word_stresses[1])
-    while '' in title_split:
-        title_split.remove('')
-    #print((title, title_stresses, " ".join(title_split)))
-    return (title_stresses, title_split)
+            title_stresses += word_stresses
+
+    return title_stresses
 
 
 def getWordStresses(word: str):
@@ -101,18 +84,10 @@ def getWordStresses(word: str):
     try:
         phones = pronouncing.phones_for_word(word)
         stresses = pronouncing.stresses(phones[0])
-        syllable_count = pronouncing.syllable_count(phones[0])
-        chunks, chunk_size = len(word), int(math.ceil(len(word)/syllable_count))
-        syllables = [word[i:i+chunk_size] for i in range(0, chunks, chunk_size)]
     except IndexError:
         # Hacky way of discarding candidate title
         return ("?", "")
-    return (stresses, syllables)
-
-def intersperse(lst, item):
-    result = [item] * (len(lst) * 2 - 1)
-    result[0::2] = lst
-    return result
+    return stresses
 
 def numbersToWords(word):
     ordinal_number_endings = ("nd", "rd", "st", "th")
@@ -169,9 +144,3 @@ def cleanStr(s: str):
         s = s.replace(char, replacement)
 
     return s
-
-
-def getWikiUrl(title: str):
-    title = title.replace(" ", "_")
-    title = urllib.parse.quote_plus(title)
-    return "https://en.wikipedia.org/wiki/" + title

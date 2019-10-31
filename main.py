@@ -2,26 +2,21 @@
 import os
 import sys
 import time
+
+import pyphen
 import wikipedia
 
-from lib.constants import BACKOFF, MAX_ATTEMPTS, MAX_STATUS_LEN, TIMEOUT_BACKOFF
+from lib.constants import BACKOFF, MAX_ATTEMPTS, MAX_STATUS_LEN, TIMEOUT_BACKOFF, LICK_STRESSES
 from lib import images
 from lib import twitter
 from lib import words
 
 
 def main():
-    #title = searchForLick(MAX_ATTEMPTS, BACKOFF)
-    #print(f"\nMatched: {title}")
-    #logo = images.getLogo(title)
-    #status_text = "\n".join((title, words.getWikiUrl(title)))
+    syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
+    images.getLiccScore(syllables).show()
 
-    #if len(status_text) > MAX_STATUS_LEN:
-    #    status_text = title
-
-    images.getLiccScore([["Jo", "seph"], ["Ri", "der"], ["Far", "ring", "ton"]]).show()
-
-    #_ = twitter.sendTweet(status_text, logo)
+    # _ = twitter.sendTweet(status_text, logo)
 
 
 def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
@@ -37,10 +32,10 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
     for attempt in range(attempts):
         print(f"\r{str(attempt * 10)} articles fetched...", end="")
         sys.stdout.flush()
-        title = checkTenPagesForLick()
-
-        if type(title) == str and len(title) > 1:
-            return title
+        title = getRandomLickTitle()
+        if title is not None:
+            print(f"Found match: {title}")
+            return words.getSyllables(title)
 
         time.sleep(backoff)
 
@@ -48,7 +43,7 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
     sys.exit(1)
 
 
-def checkTenPagesForLick():
+def getRandomLickTitle():
     """Get 10 random wiki titles, check if any of them isLick().
 
     We grab the max allowed Wikipedia page titles (10) using wikipedia.random().
@@ -76,7 +71,7 @@ def checkTenPagesForLick():
     for title in titles:
         if words.isLick(title):
             return title
-    return False
+    return None
 
 
 if __name__ == "__main__":
