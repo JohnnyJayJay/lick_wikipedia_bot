@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
-import os
 import sys
 import time
+
 import wikipedia
 
-from lib.constants import BACKOFF, MAX_ATTEMPTS, MAX_STATUS_LEN, TIMEOUT_BACKOFF
 from lib import images
 from lib import twitter
 from lib import words
+from lib.constants import BACKOFF, MAX_ATTEMPTS, TIMEOUT_BACKOFF
+
+
+def test():
+    syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
+    images.getLiccScore(syllables).show()
 
 
 def main():
-    title = searchForLick(MAX_ATTEMPTS, BACKOFF)
-    #logo = images.getLogo(title)
-    status_text = "\n".join((title, words.getWikiUrl(title)))
-
-    if len(status_text) > MAX_STATUS_LEN:
-        status_text = title
-
-    #_ = twitter.sendTweet(status_text, logo)
+    syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
+    score = images.getLiccScore(syllables)
+    path = f"./temp/licc-{int(time.time())}.png"
+    score.save(path)
+    _ = twitter.sendTweet(path)
 
 
 def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
@@ -28,17 +30,17 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
         Integer: attempts, retries remaining.
         Integer: backoff, seconds to wait between each loop.
     Returns:
-        String or False: String of wikipedia title in Lick meter, or False if
-                         none found.
+        The syllables of a matching wikipedia title
     """
     for attempt in range(attempts):
         print(f"\r{str(attempt * 10)} articles fetched...", end="")
         sys.stdout.flush()
-        title = checkTenPagesForLick()
-
-        if type(title) == str and len(title) > 1:
-            print(f"\nMatched: {title}")
-            return title
+        title = getRandomLickTitle()
+        if title is not None:
+            print(f"\nFound match: {title}")
+            syllables = words.adjustHyphenation(words.getHyphenation(title))
+            if syllables is not None:
+                return syllables
 
         time.sleep(backoff)
 
@@ -46,16 +48,16 @@ def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
     sys.exit(1)
 
 
-def checkTenPagesForLick():
+def getRandomLickTitle():
     """Get 10 random wiki titles, check if any of them isLick().
 
     We grab the max allowed Wikipedia page titles (10) using wikipedia.random().
-    If any title is in Lick meter, return the title. Otherwise, return False.
+    If any title is in Lick meter, return the title. Otherwise, return None.
 
     Args:
         None
     Returns:
-        String or False: The Lick compliant title, or False if none found.
+        String or None: The Lick compliant title, or None if none found.
     """
     wikipedia.set_rate_limiting(True)
     try:
@@ -74,7 +76,7 @@ def checkTenPagesForLick():
     for title in titles:
         if words.isLick(title):
             return title
-    return False
+    return None
 
 
 if __name__ == "__main__":

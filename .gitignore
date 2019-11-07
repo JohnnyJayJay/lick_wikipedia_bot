@@ -2,4 +2,5 @@
 *.pyc
 logos/
 .keys
-*.png
+.idea/
+

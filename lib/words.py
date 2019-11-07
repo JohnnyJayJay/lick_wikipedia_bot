@@ -1,7 +1,8 @@
 import pronouncing
-import urllib
-import re
-import math
+import pyphen
+from num2words import num2words as n2w
+from syllables import estimate
+
 
 from lib.constants import (
     BANNED_WORDS,
@@ -9,36 +10,61 @@ from lib.constants import (
     CHARS_ONLY,
     PRONUNCIATION_OVERRIDES,
     LICK_STRESSES,
+    LICK_NOTES
 )
-from num2words import num2words as n2w
 
+dic = pyphen.Pyphen(lang="en_UK")
 
 def isLick(title: str):
-    """Checks if a Wikipedia page title has the same stress pattern as The Lick.
+    """
+    Returns whether or not the argument is pronounced in a way that matches THE LICC.
 
-    >>> isLick('Audio induction loop')
-    True
-
-    >>> isTMNT('Peter Alexander Hay')
-    True
-
-    >>> isTMNT('Romeo, Romeo, wherefore art thou, Romeo?')
-    False
+    :param title: the string to be tested
+    :return: True, if it matches, False if not.
     """
     if containsBanned(title):
         return False
 
-    title = cleanStr(title)
-    title_stresses = getTitleStresses(title)
+    clean = cleanStr(title)
+    stresses = getTitleStresses(clean)
+    return LICK_STRESSES.match(stresses) is not None
 
-    if (not title_stresses) or (not title_stresses[0]):
-        return False
 
-    return True if LICK_STRESSES.match(title_stresses[0]) else False
+def getHyphenation(title: str):
+    """Splits the title into words and its words into possible hyphenations.
+
+    :param title: The string to split and hyphenate
+    :return: A list (representing the whole title) containing lists (representing words)
+            containing strings (representing hyphenated parts of the word)
+    """
+    return [dic.inserted(word).split("-") for word in title.split()]
+
+
+def adjustHyphenation(hyphenation: list):
+    """
+    Adjusts a list of possible hyphenations in the format of getHyphenation(str),
+    so that the amount of (deep) elements is equal to the amount of notes used by THE LICC.
+    Note that this modifies the argument list.
+
+    :param hyphenation: A list in the format of what getHyphenation(str) returns
+    :return: the argument or None if it couldn't be adjusted.
+    """
+    for wordIndex in range(len(hyphenation)):
+        word = hyphenation[wordIndex]
+        for syllableIndex in range(len(word)):
+            syllable = word[syllableIndex]
+            if estimate(syllable) > 1:
+                half = int(len(syllable) / 2) + 1
+                word.insert(syllableIndex, syllable[:half])
+                word.insert(syllableIndex + 1, syllable[half:])
+                word.remove(syllable)
+            if sum(map(lambda l: len(l), hyphenation)) == LICK_NOTES:
+                return hyphenation
 
 
 def containsBanned(title: str):
-    """Return True if banned words or phrases in string.
+    """
+    Return True if banned words or phrases in string.
 
     This implementation is slow, but is was fast to write and I don't care about
     speed for this script.
@@ -73,19 +99,16 @@ def getTitleStresses(title: str):
     """
     title_words = title.split()
     title_stresses = ""
-    title_split = []
     while title_words:
         word = title_words.pop(0)
         word_stresses = getWordStresses(word)
         # If word was a long number, it may have been parsed into several words.
         if isinstance(word_stresses, list):
             title_words = word_stresses + title_words
-        elif isinstance(word_stresses, tuple):
-            title_stresses += word_stresses[0]
-            title_split.append(word_stresses[1])
+        elif isinstance(word_stresses, str):
+            title_stresses += word_stresses
 
-    print((title, title_stresses, " ".join(title_split)))
-    return (title_stresses, " ".join(title_split))
+    return title_stresses
 
 
 def getWordStresses(word: str):
@@ -100,19 +123,10 @@ def getWordStresses(word: str):
     try:
         phones = pronouncing.phones_for_word(word)
         stresses = pronouncing.stresses(phones[0])
-        syllable_count = pronouncing.syllable_count(phones[0])
-        chunks, chunk_size = len(word), int(math.ceil(len(word)/syllable_count))
-        syllables = [ word[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
-        syllables_hyphenated = "".join(intersperse(syllables, "-"))
     except IndexError:
         # Hacky way of discarding candidate title
-        return ("?", "")
-    return (stresses, syllables_hyphenated)
-
-def intersperse(lst, item):
-    result = [item] * (len(lst) * 2 - 1)
-    result[0::2] = lst
-    return result
+        return "?"
+    return stresses
 
 def numbersToWords(word):
     ordinal_number_endings = ("nd", "rd", "st", "th")
@@ -169,9 +183,3 @@ def cleanStr(s: str):
         s = s.replace(char, replacement)
 
     return s
-
-
-def getWikiUrl(title: str):
-    title = title.replace(" ", "_")
-    title = urllib.parse.quote_plus(title)
-    return "https://en.wikipedia.org/wiki/" + title
