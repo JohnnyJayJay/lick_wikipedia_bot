@@ -8,8 +8,8 @@ BACKOFF = 0.5
 TIMEOUT_BACKOFF = 240
 KEY_PATH = ""
 # Licc information
-Y_POSITION = 220
-X_POSITIONS = [172, 267, 362, 457, 552, 697, 792]
+Y_POSITION = 190
+X_POSITIONS = [209, 304, 396, 491, 584, 734, 828]
 LICK_NOTES = 7
 # Article titles the contain strings in BANNED_WORDS are skipped.
 # Banned words are things that are very inappropriate, or things
