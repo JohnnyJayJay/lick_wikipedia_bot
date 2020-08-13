@@ -2,12 +2,13 @@
 import sys
 import time
 
+import tempfile
 import wikipedia
 
 from lib import images
 from lib import twitter
 from lib import words
-from lib.constants import BACKOFF, MAX_ATTEMPTS, TIMEOUT_BACKOFF
+from lib.constants import BACKOFF, MAX_ATTEMPTS, TIMEOUT_BACKOFF, PERIOD
 
 
 def test():
@@ -16,11 +17,16 @@ def test():
 
 
 def main():
-    syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
-    score = images.getLiccScore(syllables)
-    path = f"./temp/licc-{int(time.time())}.png"
-    score.save(path)
-    _ = twitter.sendTweet(path)
+	api = twitter.createClient()
+	me = api.me()
+	print(f"Logged in with {me.name} (@{me.screen_name})")
+	while True:
+		syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
+		score = images.getLiccScore(syllables)
+		with file = tempfile.NamedTemporaryFile(suffix=".png"):
+			score.save(file)
+			_ = twitter.sendTweet(api, file)
+		time.sleep(PERIOD)
 
 
 def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):

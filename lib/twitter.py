@@ -10,6 +10,12 @@ TwitterAuth = namedtuple(
 )
 
 
+def createClient():
+	TWITTER = getTwitterCredentials()
+    auth = tweepy.OAuthHandler(TWITTER.consumer_key, TWITTER.consumer_secret)
+    auth.set_access_token(TWITTER.access_token, TWITTER.access_token_secret)
+	return tweepy.API(auth)
+
 def getTwitterCredentials(keyfile=KEY_PATH):
     # TOODO: Use better config file format, better parsing logic
     try:
@@ -30,7 +36,7 @@ def getTwitterCredentials(keyfile=KEY_PATH):
     )
 
 
-def sendTweet(image_path: str):
+def sendTweet(api, file):
     """Post an image to twitter.
 
     Args:
@@ -38,9 +44,4 @@ def sendTweet(image_path: str):
     Returns:
         tweepy.status object, contains response from twitter request
     """
-    TWITTER = getTwitterCredentials()
-    auth = tweepy.OAuthHandler(TWITTER.consumer_key, TWITTER.consumer_secret)
-    auth.set_access_token(TWITTER.access_token, TWITTER.access_token_secret)
-
-    api = tweepy.API(auth)
-    return api.update_with_media(filename=image_path)
+    return api.update_with_media(filename=file.name, file=file)
