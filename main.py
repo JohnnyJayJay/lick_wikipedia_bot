@@ -23,7 +23,7 @@ def main():
 	while True:
 		syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
 		score = images.getLiccScore(syllables)
-		with file = tempfile.NamedTemporaryFile(suffix=".png"):
+		with tempfile.NamedTemporaryFile(suffix=".png") as file:
 			score.save(file)
 			_ = twitter.sendTweet(api, file)
 		time.sleep(PERIOD)

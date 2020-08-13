@@ -11,10 +11,11 @@ TwitterAuth = namedtuple(
 
 
 def createClient():
-	TWITTER = getTwitterCredentials()
+    TWITTER = getTwitterCredentials()
     auth = tweepy.OAuthHandler(TWITTER.consumer_key, TWITTER.consumer_secret)
     auth.set_access_token(TWITTER.access_token, TWITTER.access_token_secret)
-	return tweepy.API(auth)
+    return tweepy.API(auth)
+
 
 def getTwitterCredentials(keyfile=KEY_PATH):
     # TOODO: Use better config file format, better parsing logic
