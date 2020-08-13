@@ -8,7 +8,7 @@ import wikipedia
 from lib import images
 from lib import twitter
 from lib import words
-from lib.constants import BACKOFF, MAX_ATTEMPTS, TIMEOUT_BACKOFF, PERIOD
+from lib.constants import BACKOFF, MAX_ATTEMPTS, TIMEOUT_BACKOFF, POST_PERIOD
 
 
 def test():
@@ -17,16 +17,18 @@ def test():
 
 
 def main():
-	api = twitter.createClient()
-	me = api.me()
-	print(f"Logged in with {me.name} (@{me.screen_name})")
-	while True:
-		syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
-		score = images.getLiccScore(syllables)
-		with tempfile.NamedTemporaryFile(suffix=".png") as file:
-			score.save(file)
-			_ = twitter.sendTweet(api, file)
-		time.sleep(PERIOD)
+    api = twitter.createClient()
+    me = api.me()
+    print(f"Logged in with {me.name} (@{me.screen_name})")
+    while True:
+        syllables = searchForLick(MAX_ATTEMPTS, BACKOFF)
+        score = images.getLiccScore(syllables)
+        with tempfile.NamedTemporaryFile(suffix=".png") as file:
+            score.save(file)
+            _ = twitter.sendTweet(api, file)
+        print("Tweet was posted.")
+        print(f"Waiting {POST_PERIOD}s until next post")
+        time.sleep(POST_PERIOD)
 
 
 def searchForLick(attempts=MAX_ATTEMPTS, backoff=BACKOFF):
