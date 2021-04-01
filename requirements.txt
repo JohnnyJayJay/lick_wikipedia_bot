@@ -1,0 +1,8 @@
+pronouncing
+num2words
+pillow
+pyphen
+syllables
+tweepy
+wikipedia
+
